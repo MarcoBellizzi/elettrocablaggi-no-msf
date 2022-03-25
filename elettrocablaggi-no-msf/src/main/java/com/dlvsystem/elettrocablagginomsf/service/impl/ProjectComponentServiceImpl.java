@@ -1,7 +1,10 @@
 package com.dlvsystem.elettrocablagginomsf.service.impl;
 
+import com.dlvsystem.elettrocablagginomsf.dto.FileDTO;
 import com.dlvsystem.elettrocablagginomsf.dto.ProjectComponentDTO;
+import com.dlvsystem.elettrocablagginomsf.entities.FileComponent;
 import com.dlvsystem.elettrocablagginomsf.entities.ProjectComponent;
+import com.dlvsystem.elettrocablagginomsf.repository.FileComponentRepository;
 import com.dlvsystem.elettrocablagginomsf.repository.ProjectComponentRepository;
 import com.dlvsystem.elettrocablagginomsf.service.ProjectComponentService;
 import org.modelmapper.ModelMapper;
@@ -18,6 +21,9 @@ public class ProjectComponentServiceImpl implements ProjectComponentService {
     private ProjectComponentRepository projectComponentRepository;
 
     @Autowired
+    private FileComponentRepository fileComponentRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Override
@@ -25,11 +31,19 @@ public class ProjectComponentServiceImpl implements ProjectComponentService {
         List<ProjectComponentDTO> components = new ArrayList<>();
         for (ProjectComponent component : projectComponentRepository.findAll()) {
             ProjectComponentDTO comp = modelMapper.map(component, ProjectComponentDTO.class);
+
+            // TO-DO find the projects in which there is the component
             comp.setProjects(new ArrayList<>());
-            comp.setFiles(new ArrayList<>());
+
+            comp.setFilesID(new ArrayList<>());
+            for (FileComponent file : fileComponentRepository.findByProjectComponent(component)) {
+                comp.getFilesID().add(file.getId());
+            }
+
             comp.setUpdating(false);
             comp.setCreating(false);
             comp.setExpanded(false);
+
             components.add(comp);
         }
         return components;

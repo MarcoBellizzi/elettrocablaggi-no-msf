@@ -20,6 +20,15 @@ public class FileComponent implements Serializable
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "path", length = 255)
+    private String path;
+
+    @Column(name = "mimetype", length = 255)
+    private String mimetype;
+
+    @Column(name = "name", length = 255)
+    private String name;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_project_component", referencedColumnName = "id")
     private ProjectComponent projectComponent;
